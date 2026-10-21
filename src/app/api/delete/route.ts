@@ -1,13 +1,6 @@
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "ap-southeast-2",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-});
+import { s3Client, S3_BUCKET_NAME } from "@/lib/s3";
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -20,10 +13,15 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const bucketName = process.env.AWS_S3_BUCKET_NAME || "s3-lee-hyunju";
+    if (!S3_BUCKET_NAME) {
+      return NextResponse.json(
+        { error: "S3 버킷이 설정되지 않았습니다" },
+        { status: 500 }
+      );
+    }
 
     const command = new DeleteObjectCommand({
-      Bucket: bucketName,
+      Bucket: S3_BUCKET_NAME,
       Key: key,
     });
 

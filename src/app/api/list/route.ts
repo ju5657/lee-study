@@ -1,20 +1,18 @@
-import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
-import { NextRequest, NextResponse } from "next/server";
+import { ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { NextResponse } from "next/server";
+import { s3Client, S3_BUCKET_NAME } from "@/lib/s3";
 
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "ap-southeast-2",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-});
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const bucketName = process.env.AWS_S3_BUCKET_NAME || "s3-lee-hyunju";
+    if (!S3_BUCKET_NAME) {
+      return NextResponse.json(
+        { error: "S3 버킷이 설정되지 않았습니다" },
+        { status: 500 }
+      );
+    }
 
     const command = new ListObjectsV2Command({
-      Bucket: bucketName,
+      Bucket: S3_BUCKET_NAME,
     });
 
     const response = await s3Client.send(command);

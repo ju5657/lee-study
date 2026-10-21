@@ -1,13 +1,6 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "ap-southeast-2",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-});
+import { s3Client, S3_BUCKET_NAME, MAX_UPLOAD_BYTES } from "@/lib/s3";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,14 +14,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (file.size >= MAX_UPLOAD_BYTES) {
+      return NextResponse.json(
+        {
+          error: "파일 크기는 1MB 미만이어야 합니다",
+          maxBytes: MAX_UPLOAD_BYTES,
+          size: file.size,
+        },
+        { status: 413 }
+      );
+    }
+
+    if (!S3_BUCKET_NAME) {
+      return NextResponse.json(
+        { error: "S3 버킷이 설정되지 않았습니다" },
+        { status: 500 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     const filename = `${Date.now()}-${file.name}`;
-    const bucketName = process.env.AWS_S3_BUCKET_NAME || "s3-lee-hyunju";
 
     const command = new PutObjectCommand({
-      Bucket: bucketName,
+      Bucket: S3_BUCKET_NAME,
       Key: filename,
       Body: buffer,
       ContentType: file.type,
