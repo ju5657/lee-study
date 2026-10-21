@@ -5,12 +5,18 @@ Next.js (App Router) をフロントエンドに、AWS のマネージドサー�
 
 > 日本語 / 한국어 の 2 言語 UI に対応しています。（한국어 설명은 [아래](#한국어)에 있습니다）
 
+## 公開 URL
+
+**https://main.d1541dwl0vawl9.amplifyapp.com**
+
+AWS Amplify Hosting にデプロイしています。GitHub の `main` ブランチに push すると自動でビルド・デプロイされます。ログインには下記の[デモアカウント](#デモアカウント)をご利用ください。
+
 ## 主な機能
 
 | 機能 | 内容 | 使用サービス |
 |---|---|---|
 | ログイン | Cognito Hosted UI による OAuth 2.0 認可コードフロー。ログイン前は保護画面を表示しない | Amazon Cognito |
-| ファイル管理 | ファイルのアップロード・一覧表示・削除。Next.js Route Handler 経由でサーバー側から S3 を操作 | Amazon S3, AWS SDK v3 |
+| ファイル管理 | ファイルのアップロード・一覧表示・削除。Next.js Route Handler 経由でサーバー側から S3 を操作。1MB 以上のファイルはクライアント側でポップアップ警告、サーバー側でも 413 で拒否 | Amazon S3, AWS SDK v3 |
 | 氏名分割 API | 入力したフルネームを姓と名に分割して返す | API Gateway + Lambda |
 | ユーザー一覧 | DynamoDB のテーブルを照会して表形式で表示、行ごとの削除 | API Gateway + Lambda + DynamoDB |
 | 多言語対応 | ヘッダーのセレクタで日本語 / 韓国語を即時切替 | React Context |
@@ -31,7 +37,8 @@ Next.js (App Router) をフロントエンドに、AWS のマネージドサー�
                                         └─▶ DynamoDB 削除 (deleteUser, CDK で構築)
 ```
 
-- S3 の認証情報はサーバー側（Route Handler）にのみ置き、ブラウザへ露出しない構成にしています。
+- S3 の認証情報はサーバー側（Route Handler）にのみ置き、ブラウザへ露出しない構成にしています。本番環境ではアクセスキーを使わず、Amplify Hosting のコンピューティングロール（IAM Role）で S3 にアクセスします。
+- アップロードは 1MB 未満に制限し、ストレージ費用が増えない構成にしています。
 - Lambda / API Gateway のエンドポイントや Cognito の設定値はすべて環境変数で注入し、コードにハードコードしていません。
 - `deleteUser` Lambda と HTTP API は別リポジトリの AWS CDK スタックで定義し、既存の DynamoDB テーブル・Cognito User Pool をインポートして権限付与しています。
 
@@ -48,6 +55,7 @@ Next.js (App Router) をフロントエンドに、AWS のマネージドサー�
 - Amazon DynamoDB
 - AWS Lambda (Node.js 20) + Amazon API Gateway (HTTP API)
 - AWS CDK (TypeScript) によるインフラのコード化
+- AWS Amplify Hosting（GitHub 連携の CI/CD、SSR ホスティング、IAM コンピューティングロール）
 
 **開発ツール**
 - ESLint (eslint-config-next)
@@ -85,9 +93,10 @@ npm run dev -- -p 3002       # Cognito のリダイレクト URL に合わせた
 
 ブラウザで http://localhost:3002 を開きます。必要な環境変数は [.env.example](.env.example) を参照してください。
 
+<a id="デモアカウント"></a>
 ## デモアカウント
 
-Cognito に登録済みのテスト用アカウントです。「AWS Cognitoでログイン」ボタンから以下でログインできます。
+Cognito に登録済みのテスト用アカウントです。公開 URL またはローカルで「AWS Cognitoでログイン」ボタンを押し、以下でログインできます。
 
 | 項目 | 値 |
 |---|---|
@@ -112,7 +121,7 @@ Next.js(App Router)를 프런트엔드로, AWS 관리형 서비스(Cognito / S3 
 
 **주요 기능**
 - Cognito Hosted UI 기반 OAuth 2.0 로그인. 로그인 전에는 보호 화면을 표시하지 않음
-- S3 파일 업로드 / 목록 / 삭제. Next.js Route Handler를 통해 서버 측에서만 S3에 접근
+- S3 파일 업로드 / 목록 / 삭제. Next.js Route Handler를 통해 서버 측에서만 S3에 접근. 1MB 이상 파일은 클라이언트 팝업으로 안내하고 서버에서도 413으로 거부
 - API Gateway + Lambda로 이름을 성과 이름으로 분리
 - DynamoDB 테이블 조회 및 행 삭제 (삭제용 Lambda와 HTTP API는 CDK로 구축)
 - 한국어 / 일본어 UI 즉시 전환
@@ -120,7 +129,9 @@ Next.js(App Router)를 프런트엔드로, AWS 관리형 서비스(Cognito / S3 
 **기술 스택**
 - Next.js 16, React 19, TypeScript 5, Tailwind CSS 4
 - Amazon Cognito, Amazon S3 (AWS SDK v3), Amazon DynamoDB, AWS Lambda (Node.js 20), Amazon API Gateway
-- AWS CDK (TypeScript), ESLint, AWS CLI
+- AWS CDK (TypeScript), AWS Amplify Hosting (GitHub 연동 CI/CD, SSR 호스팅), ESLint, AWS CLI
+
+**배포 URL**: https://main.d1541dwl0vawl9.amplifyapp.com (main 브랜치 푸시 시 자동 배포)
 
 **실행**
 
