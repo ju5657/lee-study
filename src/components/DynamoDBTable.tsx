@@ -41,7 +41,7 @@ interface UserRow {
   firstName: string;
 }
 
-function DynamoDBTable({ lang = "ko" }: { lang?: Lang }) {
+function DynamoDBTable({ lang = "ja" }: { lang?: Lang }) {
   const [data, setData] = useState<UserRow[]>([]);
   const [showTable, setShowTable] = useState(false);
   const [loading, setLoading] = useState(false);

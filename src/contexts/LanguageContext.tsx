@@ -6,10 +6,10 @@ export type Lang = "ko" | "ja";
 const LanguageContext = createContext<{
   lang: Lang;
   setLang: (l: Lang) => void;
-}>({ lang: "ko", setLang: () => {} });
+}>({ lang: "ja", setLang: () => {} });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [lang, setLang] = useState<Lang>("ko");
+  const [lang, setLang] = useState<Lang>("ja");
   return <LanguageContext.Provider value={{ lang, setLang }}>{children}</LanguageContext.Provider>;
 };
 

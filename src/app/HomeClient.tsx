@@ -22,8 +22,8 @@ export default function HomeClient() {
       <main className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="absolute top-0 left-0 w-full"><HeaderLangSelector /></div>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">로딩 중...</h1>
-          <p className="text-slate-600">잠시만 기다려주세요.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-4">{lang === "ko" ? "로딩 중..." : "読み込み中..."}</h1>
+          <p className="text-slate-600">{lang === "ko" ? "잠시만 기다려주세요." : "しばらくお待ちください。"}</p>
         </div>
       </main>
     );

@@ -2,9 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AuthCallback() {
   const router = useRouter();
+  const { lang } = useLanguage();
 
   useEffect(() => {
     // Cognito OAuth 리다이렉트 후 처리
@@ -19,9 +21,11 @@ export default function AuthCallback() {
     <main className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center">
         <h1 className="text-2xl font-bold text-slate-900 mb-4">
-          로그인 중...
+          {lang === "ko" ? "로그인 중..." : "ログイン中..."}
         </h1>
-        <p className="text-slate-600">잠시만 기다려주세요.</p>
+        <p className="text-slate-600">
+          {lang === "ko" ? "잠시만 기다려주세요." : "しばらくお待ちください。"}
+        </p>
       </div>
     </main>
   );
