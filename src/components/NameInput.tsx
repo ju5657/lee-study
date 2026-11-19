@@ -42,6 +42,19 @@ const NameInput: React.FC = () => {
       <h1 className="text-2xl font-bold text-slate-900 mb-8">
         {lang === 'ko' ? 'ApiGateway 랑 Lamda 접속테스트' : 'ApiGatewayとLamda接続テスト'}
       </h1>
+      <ul className="text-sm text-slate-600 mb-6 list-disc list-inside space-y-1">
+        {lang === 'ko' ? (
+          <>
+            <li>성과 이름 사이에 스페이스를 넣어 입력해 주세요. (예: 이 현주)</li>
+            <li>제출 버튼을 누르면 API Gateway → Lambda를 거쳐 DynamoDB에 등록됩니다.</li>
+          </>
+        ) : (
+          <>
+            <li>姓と名の間にスペースを入れて入力してください。（例：山田 太郎）</li>
+            <li>送信ボタンを押すと、API Gateway → Lambda を経由して DynamoDB に登録されます。</li>
+          </>
+        )}
+      </ul>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <label htmlFor="name-input" style={{ marginBottom: 8 }}>
           {lang === 'ko' ? '이름을 입력하세요:' : '名前を入力してください:'}
@@ -51,7 +64,7 @@ const NameInput: React.FC = () => {
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder={lang === 'ko' ? '예: 이현주' : '例: イ・ヒョンジュ'}
+          placeholder={lang === 'ko' ? '예: 이 현주' : '例: 山田 太郎'}
           style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', marginBottom: 8 }}
           disabled={loading}
         />
